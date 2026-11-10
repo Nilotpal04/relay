@@ -6,5 +6,9 @@
   "files.trimTrailingWhitespace": true,
   "files.eol": "\n",
   "python.analysis.typeCheckingMode": "basic",
-  "editor.rulers": [88, 100]
+  "editor.rulers": [
+    88,
+    100
+  ],
+  "editor.guides.indentation": false
 }
