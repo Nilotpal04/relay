@@ -30,3 +30,17 @@ async def get_webhook_request(
     )
 
     return result.scalar_one_or_none()
+
+async def delete_webhook_request(
+        session: AsyncSession,
+        request_id: UUID,
+) -> bool | None:
+    request = await get_webhook_request(session, request_id)
+
+    if request is None:
+        return None
+
+    await session.delete(request)
+    await session.commit()
+
+    return True
