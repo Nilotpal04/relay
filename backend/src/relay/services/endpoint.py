@@ -43,3 +43,12 @@ async def delete_endpoint(
 ) -> None:
     await session.delete(endpoint)
     await session.commit()
+
+async def get_endpoint_by_token(
+        session: AsyncSession,
+        token: str
+) -> Endpoint | None:
+    stmt = select(Endpoint).where(Endpoint.token == token)
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
+
