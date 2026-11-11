@@ -2,7 +2,6 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    Column,
     DateTime,
     ForeignKey,
     Index,
@@ -23,7 +22,7 @@ class WebhookRequest(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
-        default=uuid.UUID,
+        default=uuid.uuid4,
     )
 
     endpoint_id: Mapped[uuid.UUID] = mapped_column(
@@ -70,7 +69,7 @@ class WebhookRequest(Base):
 
     __table_args__ = (
         Index (
-            "ix_webhook_resquests_endpoint_recieved"
+            "ix_webhook_resquests_endpoint_recieved",
             "endpoint_id",
             "received_at",
         ),
