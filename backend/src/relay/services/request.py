@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from typing import cast
+from sqlalchemy import select, delete, CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from relay.models.webhook_request import WebhookRequest
@@ -44,3 +45,16 @@ async def delete_webhook_request(
     await session.commit()
 
     return True
+
+async def clear_endpoint_requests(
+        session: AsyncSession,
+        endpoint_id: UUID,
+) -> int:
+    result = await session.execute(
+        delete(WebhookRequest).where(WebhookRequest.endpoint_id == endpoint_id)
+    )
+
+    await session.commit()
+
+    cursor_result = cast(CursorResult, result)
+    return cursor_result.rowcount or 0
