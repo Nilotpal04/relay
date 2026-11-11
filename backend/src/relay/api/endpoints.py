@@ -8,7 +8,7 @@ from relay.schemas.endpoint import EndpointCreate, EndpointResponse
 from relay.services.endpoint import (
     create_endpoint,
     list_endpoints,
-    get_endpoint,
+    get_endpoint_by_id,
     delete_endpoint,
 )
 
@@ -40,7 +40,7 @@ async def get_endpoint_route(
     endpoint_id: UUID,
     session: AsyncSession = Depends(get_db_session),
 ):
-    endpoint = await get_endpoint(session, endpoint_id)
+    endpoint = await get_endpoint_by_id(session, endpoint_id)
 
     if endpoint is None:
         raise HTTPException(
@@ -59,7 +59,7 @@ async def delete_endpoint_route(
     endpoint_id: UUID,
     session: AsyncSession = Depends(get_db_session),
 ):
-    endpoint = await get_endpoint(session, endpoint_id)
+    endpoint = await get_endpoint_by_id(session, endpoint_id)
 
     if endpoint is None:
         raise HTTPException(

@@ -28,7 +28,7 @@ async def list_endpoints(session: AsyncSession) -> list[Endpoint]:
     )
     return list(result.scalars().all())
 
-async def get_endpoint(
+async def get_endpoint_by_id(
         session: AsyncSession,
         endpoint_id: UUID,
 ) -> Endpoint | None:
