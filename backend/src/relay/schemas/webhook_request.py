@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 from uuid import UUID
 
@@ -29,6 +30,27 @@ class WebhookRequestDetail(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def process_body(cls, V):
-        pass
+    def process_body(cls, values):
+        data = {
+            "id": values.id,
+            "endpoint_id": values.endpoint_id,
+            "method": values.method,
+            "headers": values.headers,
+            "query_params": values.query_params,
+            "content_type": values.content_type,
+            "source_ip": values.source_ip,
+            "received_at": values.received_at,
+        }
+
+        body = values.body
+
+        try:
+            data["body_content"] = body.decode("utf-8")
+            data["body_encoding"] = "utf-8"
+
+        except UnicodeDecodeError:
+            data["body_content"] = base64.b64encode(body).decode("ascii")
+            data["body_encoding"] = "base64"
+
+        return data
 
