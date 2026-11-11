@@ -29,7 +29,7 @@ async def receive_webhook(
     content_type = request.headers.get("content-type")
     source_ip = request.client.host if request.client else None
 
-    await create_webhook_request(
+    webhook_req = await create_webhook_request(
         session=session,
         endpoint_id=endpoint.id,
         method=method,
@@ -40,4 +40,7 @@ async def receive_webhook(
         source_ip=source_ip,
     )
 
-    return {"status": "accepted"}
+    return {
+        "status": "accepted",
+        "request_id": str(webhook_req.id)
+    }
