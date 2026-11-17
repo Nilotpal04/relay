@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 
 [[package]]
@@ -1050,6 +1050,7 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "pydantic-settings" },
     { name = "sqlalchemy", extra = ["asyncio"] },
+    { name = "websockets" },
 ]
 
 [package.dev-dependencies]
@@ -1067,6 +1068,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.143.2" },
     { name = "pydantic-settings", specifier = ">=2.16.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.1.4" },
+    { name = "websockets", specifier = ">=17.2" },
 ]
 
 [package.metadata.requires-dev]
