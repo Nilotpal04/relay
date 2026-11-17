@@ -7,8 +7,9 @@ async def main():
     url = f"ws://127.0.0.1:8000/api/ws/endpoints/{ENDPOINT_ID}"
 
     async with websockets.connect(url) as websocket:
-        print("Connected to relay WebSocket!")
+        print("Connected! Waiting for webhook events...")
 
-        await asyncio.sleep(15)
+        message = await websocket.recv()
+        print("Received:", message)
 
 asyncio.run(main())
