@@ -1,14 +1,12 @@
 from uuid import UUID
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException, status
-from relay.realtime.manager import ConnectionManager
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, status
+from relay.realtime.runtime import connection_manager
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from relay.db.session import get_db_session
 from relay.services.endpoint import get_endpoint_by_id
 
 router = APIRouter(prefix="/ws", tags=["websocket"])
-
-manager = ConnectionManager()
 
 @router.websocket("/endpoints/{endpoint_id}")
 async def endpoint_websocket(
@@ -22,11 +20,11 @@ async def endpoint_websocket(
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
-    await manager.connect(websocket, endpoint_id)
+    await connection_manager.connect(websocket, endpoint_id)
 
     try:
         while True:
             await websocket.receive_text()
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket, endpoint_id)
+        connection_manager.disconnect(websocket, endpoint_id)

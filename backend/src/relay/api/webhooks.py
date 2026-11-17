@@ -5,7 +5,7 @@ from relay.db.session import get_db_session
 from relay.services.endpoint import get_endpoint_by_token
 from relay.services.webhook import  create_webhook_request
 
-from relay.api.websocket import manager
+from relay.realtime.runtime import event_publisher
 
 
 router = APIRouter(prefix="/hooks", tags=["Webhooks"])
@@ -42,7 +42,7 @@ async def receive_webhook(
         source_ip=source_ip,
     )
 
-    await manager.broadcast(
+    await event_publisher.publish(
         endpoint_id=endpoint.id,
         message={
             "event": "webhook.received",
@@ -61,3 +61,4 @@ async def receive_webhook(
         "status": "accepted",
         "request_id": str(webhook_req.id)
     }
+
