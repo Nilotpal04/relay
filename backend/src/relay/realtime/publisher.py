@@ -1,0 +1,16 @@
+from abc import ABC, abstractmethod
+from uuid import UUID
+from relay.realtime.manager import ConnectionManager
+
+class EventPublisher(ABC):
+
+    @abstractmethod
+    async def publish(self, endpoint_id: UUID, message: dict):
+        ...
+
+class InMemoryEventPublisher(EventPublisher):
+    def __init__(self, connection_manager: ConnectionManager):
+        self.connection_manager = connection_manager
+
+    async def publish(self, endpoint_id: UUID, message: dict):
+        await self.connection_manager.broadcast(endpoint_id, message)
