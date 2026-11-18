@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 from fastapi import Request, APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,23 +46,25 @@ async def receive_webhook(
         source_ip=source_ip,
     )
 
-    await event_publisher.publish(
-        endpoint_id=endpoint.id,
-        message={
-            "event": "webhook.received",
-            "data": {
-                "id": str(webhook_req.id),
-                "endpoint_id": str(webhook_req.endpoint_id),
-                "method": webhook_req.method,
-                "content_type": webhook_req.content_type,
-                "source_ip": webhook_req.source_ip,
-                "received_at": webhook_req.received_at.isoformat(),
+    try:
+        await event_publisher.publish(
+            endpoint_id=endpoint.id,
+            message={
+                "event": "webhook.received",
+                "data": {
+                    "id": str(webhook_req.id),
+                    "endpoint_id": str(webhook_req.endpoint_id),
+                    "method": webhook_req.method,
+                    "content_type": webhook_req.content_type,
+                    "source_ip": webhook_req.source_ip,
+                    "received_at": webhook_req.received_at.isoformat(),
+                },
             },
-        },
-    )
+        )
+    except Exception:
+        logger.exception(f"Failed to publish real-time event for webhook {webhook_req.id}")
 
     return {
         "status": "accepted",
         "request_id": str(webhook_req.id)
     }
-
