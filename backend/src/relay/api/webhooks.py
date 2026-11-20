@@ -9,8 +9,8 @@ from relay.db.session import get_db_session
 from relay.services.endpoint import get_endpoint_by_token
 from relay.services.webhook import  create_webhook_request
 
-from relay.realtime.runtime import event_publisher
-
+from relay.core.dependencies import get_event_publisher
+from relay.realtime.publisher import EventPublisher
 
 router = APIRouter(prefix="/hooks", tags=["Webhooks"])
 
@@ -18,7 +18,8 @@ router = APIRouter(prefix="/hooks", tags=["Webhooks"])
 async def receive_webhook(
     token: str,
     request: Request,
-    session: AsyncSession = Depends(get_db_session)
+    session: AsyncSession = Depends(get_db_session),
+    event_publisher: EventPublisher = Depends(get_event_publisher)
 ):
     endpoint = await get_endpoint_by_token(session, token)
 
