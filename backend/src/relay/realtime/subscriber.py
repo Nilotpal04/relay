@@ -1,6 +1,10 @@
 import json
 from uuid import UUID
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from redis.asyncio import Redis
 from relay.realtime.manager import ConnectionManager
 
@@ -11,17 +15,23 @@ class RedisEventSubscriber:
 
     async def listen(self) -> None:
         pubsub = self.redis.pubsub()
-        await pubsub.psubscribe("relay:endpoint:*")
 
         try:
+            await pubsub.psubscribe("relay:endpoint:*")
+
             async for message in pubsub.listen():
                 if message["type"] != "pmessage":
                     continue
 
-                channel = message["channel"]
-                endpoint_id = UUID(channel.removeprefix("relay:endpoint:"))
-                message = json.loads(message["data"])
+                try:
+                    channel = message["channel"]
+                    endpoint_id = UUID(channel.removeprefix("relay:endpoint:"))
+                    event = json.loads(message["data"])
 
-                await self.connection_manager.broadcast(endpoint_id, message)
+                    await self.connection_manager.broadcast(endpoint_id, event)
+
+                except Exception:
+                    logger.exception("Failed to process Redis Pub/Sub message")
+
         finally:
             await pubsub.aclose()
