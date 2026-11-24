@@ -29,6 +29,7 @@ if config.config_file_name is not None:
 from relay.db.base import Base
 from relay.models.endpoint  import Endpoint
 from relay.models.webhook_request import WebhookRequest
+from relay.models.user import User
 
 target_metadata = Base.metadata
 
